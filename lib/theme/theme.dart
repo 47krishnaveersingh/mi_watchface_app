@@ -17,7 +17,7 @@ class MyTheme {
           titleTextStyle: TextStyle(color: Colors.black12, fontSize: 18)));
   static ThemeData darkTheme() => ThemeData(
       fontFamily: GoogleFonts.poppins().fontFamily,
-      cardColor: Colors.black,
+      cardColor: const Color.fromRGBO(23, 23, 23, 0.4),
       canvasColor: darkCreamColor,
       brightness: Brightness.dark,
       appBarTheme: const AppBarTheme(
