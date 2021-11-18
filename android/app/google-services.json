@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "516974244405",
+    "project_id": "mi-band-6-watch-faces",
+    "storage_bucket": "mi-band-6-watch-faces.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516974244405:android:6b01cd9a7c9e962279777c",
+        "android_client_info": {
+          "package_name": "com.abhisheksolanki.miband6watchfaces"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516974244405-sknfml08an0skslveulirmstffpl4mqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoK7VrsTQErjUeEOnsa-gQs-PsleytZMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516974244405-sknfml08an0skslveulirmstffpl4mqj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516974244405:android:8fb145831e7d931879777c",
+        "android_client_info": {
+          "package_name": "com.example.mi_watchface_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516974244405-fhgtkjqq9lkj0u5ti8n19hjp8otsa97j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mi_watchface_app",
+            "certificate_hash": "a25a237150bf2e0de87dffbff45b194acd629f0f"
+          }
+        },
+        {
+          "client_id": "516974244405-sknfml08an0skslveulirmstffpl4mqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoK7VrsTQErjUeEOnsa-gQs-PsleytZMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516974244405-sknfml08an0skslveulirmstffpl4mqj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
