@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mi_watchface_app/widgets/watch_faces_list.dart';
+import 'package:mi_watchface_app/utils/nav_dir.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter_archive/flutter_archive.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,6 +27,81 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _gettingMoreWatchFaces = false;
   bool _moreWatchFacesAvailable = true;
+
+  //variables to support download progress tracker
+  bool downloading = false;
+  String progress = '0'; //progress percentage
+  bool isDownloaded = false;
+
+  var bs = ButtonState.idle; //variable using for setting progress button state
+
+// --------------------------------------------------------------------------------------------
+
+  // downloading logic is handled by this method
+  Future<void> downloadFile(uri) async {
+    setState(() {
+      downloading = true;
+      bs = ButtonState.loading;
+    });
+
+    String basePath = await MyHandler.createFile();
+
+    //setting zip file name
+    String savePath = basePath + "/${uri.hashCode}.zip";
+
+    Dio dio = Dio();
+
+    await dio.download(
+      uri,
+      savePath,
+      onReceiveProgress: (rcv, total) {
+        print(
+            'received: ${rcv.toStringAsFixed(0)} out of total: ${total.toStringAsFixed(0)}');
+
+        setState(() {
+          progress = ((rcv / total) * 100).toStringAsFixed(0);
+        });
+
+        if (progress == '100') {
+          setState(() {
+            isDownloaded = true;
+            bs = ButtonState.success;
+          });
+        } else if (double.parse(progress) < 100) {}
+      },
+      deleteOnError: true,
+    ).then((_) {
+      setState(() {
+        if (progress == '100') {
+          isDownloaded = true;
+          bs = ButtonState.success;
+        }
+
+        downloading = false;
+      });
+    });
+
+    //extracting zip file
+    final zipFile = File(savePath);
+
+    //TODO:remove   + "/5"  after zipped all files in folder
+    final destinationDir = Directory(basePath + "/5");
+    try {
+      await ZipFile.extractToDirectory(
+          zipFile: zipFile, destinationDir: destinationDir);
+    } catch (e) {
+      print(e);
+    }
+
+    // deleting downloaded zip after extracting
+    try {
+      File(savePath).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // -------------------------------------------------------------------------------------------------
 
   _getWatchFaces() async {
     Query q = _firestore
@@ -345,27 +426,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .color(context.canvasColor)
                                                 .make(),
                                             Material(
-                                              elevation: 5,
-                                              borderRadius:
-                                                  BorderRadius.circular(14),
-                                              color: Colors.blueGrey,
-                                              child: MaterialButton(
-                                                onPressed: () {},
-                                                minWidth: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.399,
-                                                child: const Text(
-                                                  "Install",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            )
+                                                elevation: 5,
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Colors.blueGrey,
+                                                child: ProgressButton.icon(
+                                                    iconedButtons: {
+                                                      ButtonState.idle:
+                                                          IconedButton(
+                                                              text: "Install",
+                                                              icon: Icon(
+                                                                  Icons.send,
+                                                                  color: Colors
+                                                                      .white),
+                                                              color: Colors
+                                                                  .deepPurple
+                                                                  .shade500),
+                                                      ButtonState.loading:
+                                                          IconedButton(
+                                                              text: "Loading",
+                                                              color: Colors
+                                                                  .deepPurple
+                                                                  .shade700),
+                                                      ButtonState.fail:
+                                                          IconedButton(
+                                                              text: "Failed",
+                                                              icon: Icon(
+                                                                  Icons.cancel,
+                                                                  color: Colors
+                                                                      .white),
+                                                              color: Colors.red
+                                                                  .shade300),
+                                                      ButtonState.success:
+                                                          IconedButton(
+                                                              text: "Success",
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .check_circle,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade400)
+                                                    },
+                                                    onPressed: () async {
+                                                      downloadFile(_watchFaces[
+                                                              index]
+                                                          .get("installFile"));
+                                                    },
+                                                    //TODO:state of button not working properly
+                                                    state: bs))
                                             // Text("Type : Digital"),
                                             // Text("Time format : 24 Hours")
                                           ],

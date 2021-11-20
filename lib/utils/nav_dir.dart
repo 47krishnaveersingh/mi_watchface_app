@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter_application_1/utils/saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,13 +16,15 @@ class MyHandler {
       //     .create(recursive: true);
       // f.writeAsString("hi my name is krishnaveer singh");
 
-      MyDownloader.dnldfiles(stringpath);
+      // MyDownloader.dnldfiles(stringpath);
 
       print(
           "..........$stringpath...........flie created.......................");
+      return stringpath;
     } else {
       await Permission.storage.request();
       // await openAppSettings();
+      return null;
     }
   }
 }

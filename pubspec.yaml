@@ -42,6 +42,11 @@ dependencies:
   fluttertoast: ^8.0.8
   lottie: ^1.2.1
   flutter_gifimage: ^1.0.0
+  path_provider: ^2.0.5
+  permission_handler: ^8.2.5
+  dio: ^4.0.1
+  flutter_archive: ^4.1.0
+  progress_state_button: ^1.0.4
 
 
 dev_dependencies:
