@@ -33,15 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
   String progress = '0'; //progress percentage
   bool isDownloaded = false;
 
-  var bs = ButtonState.idle; //variable using for setting progress button state
+// using string var as button sate with index concatenated to determine particular button state
+  var bs = "none"; //variable using for setting progress button state
 
 // --------------------------------------------------------------------------------------------
 
   // downloading logic is handled by this method
-  Future<void> downloadFile(uri) async {
+  Future<void> downloadFile(uri, num index) async {
     setState(() {
       downloading = true;
-      bs = ButtonState.loading;
+      bs = "l" + index.toString();
     });
 
     String basePath = await MyHandler.createFile();
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (progress == '100') {
           setState(() {
             isDownloaded = true;
-            bs = ButtonState.success;
+            bs = "s" + index.toString();
           });
         } else if (double.parse(progress) < 100) {}
       },
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         if (progress == '100') {
           isDownloaded = true;
-          bs = ButtonState.success;
+          bs = "s" + index.toString();
         }
 
         downloading = false;
@@ -99,6 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print(e);
     }
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      bs = "none";
+    });
   }
 
   // -------------------------------------------------------------------------------------------------
@@ -430,53 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(14),
                                                 color: Colors.blueGrey,
-                                                child: ProgressButton.icon(
-                                                    iconedButtons: {
-                                                      ButtonState.idle:
-                                                          IconedButton(
-                                                              text: "Install",
-                                                              icon: Icon(
-                                                                  Icons.send,
-                                                                  color: Colors
-                                                                      .white),
-                                                              color: Colors
-                                                                  .deepPurple
-                                                                  .shade500),
-                                                      ButtonState.loading:
-                                                          IconedButton(
-                                                              text: "Loading",
-                                                              color: Colors
-                                                                  .deepPurple
-                                                                  .shade700),
-                                                      ButtonState.fail:
-                                                          IconedButton(
-                                                              text: "Failed",
-                                                              icon: Icon(
-                                                                  Icons.cancel,
-                                                                  color: Colors
-                                                                      .white),
-                                                              color: Colors.red
-                                                                  .shade300),
-                                                      ButtonState.success:
-                                                          IconedButton(
-                                                              text: "Success",
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .check_circle,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              color: Colors
-                                                                  .green
-                                                                  .shade400)
-                                                    },
-                                                    onPressed: () async {
-                                                      downloadFile(_watchFaces[
-                                                              index]
-                                                          .get("installFile"));
-                                                    },
-                                                    //TODO:state of button not working properly
-                                                    state: bs))
+                                                child: progressbtn(index, bs))
                                             // Text("Type : Digital"),
                                             // Text("Time format : 24 Hours")
                                           ],
@@ -496,6 +455,46 @@ class _HomeScreenState extends State<HomeScreen> {
                         )),
                 ),
         ));
+  }
+
+  ProgressButton progressbtn(int index, String dummy) {
+    ButtonState bs;
+    bs = ButtonState.idle;
+    if (dummy != "none") {
+      if (dummy.substring(1) == index.toString()) {
+        if (dummy.substring(0, 1) == "l") {
+          bs = ButtonState.loading;
+        } else {
+          bs = ButtonState.success;
+        }
+      }
+    }
+
+    return ProgressButton.icon(
+        iconedButtons: {
+          ButtonState.idle: IconedButton(
+              text: "Install",
+              icon: Icon(Icons.send, color: Colors.white),
+              color: Colors.deepPurple.shade500),
+          ButtonState.loading:
+              IconedButton(text: "Loading", color: Colors.deepPurple.shade700),
+          ButtonState.fail: IconedButton(
+              text: "Failed",
+              icon: Icon(Icons.cancel, color: Colors.white),
+              color: Colors.red.shade300),
+          ButtonState.success: IconedButton(
+              text: "Success",
+              icon: Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              color: Colors.green.shade400)
+        },
+        onPressed: () async {
+          downloadFile(_watchFaces[index].get("installFile"), index);
+        },
+        //TODO:state of button not working properly
+        state: bs);
   }
 
   @override
