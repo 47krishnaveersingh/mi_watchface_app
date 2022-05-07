@@ -1,6 +1,10 @@
 # mi_watchface_app
 
-flutter app to set mi band watch face
+<img src="M_data\giphy.gif"/>
+
+Made a Flutter app for mi band wallpapers using material app and firebase.
+supports android -10 and lower
+
 
 ## Getting Started
 
